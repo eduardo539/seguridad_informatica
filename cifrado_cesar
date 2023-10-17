@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cifrado César</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: rgb(179, 179, 179);
+        }
+
+        #container {
+            max-width: 400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        label{
+            font-size: 20px;
+        }
+
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 20px;
+            border-radius: 10px;
+        }
+
+        .btn_Cifrar {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: rgb(0, 0, 0);
+            font-size: 20px;
+            border: none;
+            cursor: pointer;
+        }
+        .btn_Decifrar {
+            padding: 10px 20px;
+            background-color: #85ec66;
+            color: rgb(0, 0, 0);
+            font-size: 20px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn_Cifrar:hover {
+            background-color: #8bc3ff;
+        }
+        .btn_Decifrar:hover {
+            background-color: #8dff92;
+        }
+
+        #resultado {
+            margin-top: 20px;
+            font-size: 25px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>Cifrado César</h1>
+        <label for="texto">Texto:</label>
+        <input type="text" id="texto" placeholder="Ingrese una palabra">
+        <label for="desplazamiento">Desplazamiento:</label>
+        <input type="number" id="desplazamiento" placeholder="Ingrese el desplazamiento">
+        <button class="btn_Cifrar" onclick="cifrar()">Cifrar</button>
+        <button class="btn_Decifrar" onclick="descifrar()">Descifrar</button>
+        <div id="resultado"></div>
+    </div>
+
+    <script>
+        function cifrar() {
+            realizarCifradoDescifrado(1);
+        }
+
+        function descifrar() {
+            realizarCifradoDescifrado(-1);
+        }
+
+        function realizarCifradoDescifrado(sentido) {
+            const textoOriginal = document.getElementById("texto").value;
+            const desplazamiento = parseInt(document.getElementById("desplazamiento").value);
+
+            if (isNaN(desplazamiento)) {
+                alert("Por favor, ingrese un valor válido para el desplazamiento.");
+                return;
+            }
+
+            let resultado = "";
+            for (let i = 0; i < textoOriginal.length; i++) {
+                let char = textoOriginal[i];
+                const esMayuscula = char === char.toUpperCase();
+
+                if (char === "ñ" || char === "Ñ") {
+                    char = esMayuscula ? "N" : "n";
+                }
+
+                if (/^[A-Za-z]+$/.test(char)) {
+                    let codigo = char.charCodeAt(0);
+
+                    codigo = (codigo - (esMayuscula ? 65 : 97) + desplazamiento * sentido) % 26;
+                    if (codigo < 0) {
+                        codigo += 26;
+                    }
+
+                    char = String.fromCharCode(codigo + (esMayuscula ? 65 : 97));
+                }
+
+                resultado += char;
+            }
+
+            document.getElementById("resultado").textContent = "Resultado: " + resultado;
+        }
+    </script>
+</body>
+</html>
