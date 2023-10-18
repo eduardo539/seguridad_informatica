@@ -1,89 +1,68 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Cifrado César</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
+import React, { useState } from 'react';
+import CryptoJS from 'crypto-js';
 
-        #container {
-            max-width: 400px;
-            margin: 0 auto;
-            text-align: center;
-        }
+function CifradoCesar() {
+  const [texto, setTexto] = useState('');
+  const [desplazamiento, setDesplazamiento] = useState('');
+  const [resultado, setResultado] = useState('');
 
-        input[type="text"], input[type="number"] {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-        }
+  const cifrar = () => {
+    const desplazamientoInt = parseInt(desplazamiento);
 
-        button {
-            padding: 10px 20px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
+    if (isNaN(desplazamientoInt)) {
+      alert('Por favor, ingrese un valor válido para el desplazamiento.');
+      return;
+    }
 
-        button:hover {
-            background-color: #0056b3;
-        }
+    const resultado = cifrarCesar(texto, desplazamientoInt);
+    setResultado('Resultado cifrado: ' + resultado);
+  };
 
-        #resultado {
-            margin-top: 20px;
-        }
-    </style>
-</head>
-<body>
-    <div id="container">
-        <h1>Cifrado César</h1>
-        <label for="texto">Texto:</label>
-        <input type="text" id="texto" placeholder="Ingrese una palabra">
-        <label for="desplazamiento">Desplazamiento:</label>
-        <input type="number" id="desplazamiento" placeholder="Ingrese el desplazamiento">
-        <button onclick="cifrar()">Cifrar</button>
-        <button onclick="descifrar()">Descifrar</button>
-        <div id="resultado"></div>
+  const descifrar = () => {
+    const desplazamientoInt = parseInt(desplazamiento);
+
+    if (isNaN(desplazamientoInt)) {
+      alert('Por favor, ingrese un valor válido para el desplazamiento.');
+      return;
+    }
+
+    const resultado = descifrarCesar(texto, desplazamientoInt);
+    setResultado('Resultado descifrado: ' + resultado);
+  };
+
+  const cifrarCesar = (texto, desplazamiento) => {
+    return CryptoJS.AES.encrypt(texto, desplazamiento.toString()).toString();
+  };
+
+  const descifrarCesar = (textoCifrado, desplazamiento) => {
+    const bytes = CryptoJS.AES.decrypt(textoCifrado, desplazamiento.toString());
+    return bytes.toString(CryptoJS.enc.Utf8);
+  };
+
+  return (
+    <div>
+      <h1>Cifrado César</h1>
+      <label htmlFor="texto">Texto:</label>
+      <input
+        type="text"
+        id="texto"
+        placeholder="Ingrese una palabra"
+        value={texto}
+        onChange={(e) => setTexto(e.target.value)}
+      />
+      <label htmlFor="desplazamiento">Desplazamiento:</label>
+      <input
+        type="number"
+        id="desplazamiento"
+        placeholder="Ingrese el desplazamiento"
+        value={desplazamiento}
+        onChange={(e) => setDesplazamiento(e.target.value)}
+      />
+      <button onClick={cifrar}>Cifrar</button>
+      <button onClick={descifrar}>Descifrar</button>
+      <div id="resultado">{resultado}</div>
     </div>
+  );
+}
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.3.0/crypto-js.js"></script>
-    <script>
-        function cifrar() {
-            const textoOriginal = document.getElementById("texto").value;
-            const desplazamiento = parseInt(document.getElementById("desplazamiento").value);
-
-            if (isNaN(desplazamiento)) {
-                alert("Por favor, ingrese un valor válido para el desplazamiento.");
-                return;
-            }
-
-            const resultado = cifrarCesar(textoOriginal, desplazamiento);
-            document.getElementById("resultado").textContent = "Resultado cifrado: " + resultado;
-        }
-
-        function descifrar() {
-            const textoCifrado = document.getElementById("texto").value;
-            const desplazamiento = parseInt(document.getElementById("desplazamiento").value);
-
-            if (isNaN(desplazamiento)) {
-                alert("Por favor, ingrese un valor válido para el desplazamiento.");
-                return;
-            }
-
-            const resultado = descifrarCesar(textoCifrado, desplazamiento);
-            document.getElementById("resultado").textContent = "Resultado descifrado: " + resultado;
-        }
-
-        function cifrarCesar(texto, desplazamiento) {
-            return CryptoJS.AES.encrypt(texto, desplazamiento.toString()).toString();
-        }
-
-        function descifrarCesar(textoCifrado, desplazamiento) {
-            const bytes = CryptoJS.AES.decrypt(textoCifrado, desplazamiento.toString());
-            return bytes.toString(CryptoJS.enc.Utf8);
-        }
-    </script>
-</body>
-</html>
+export default CifradoCesar;
