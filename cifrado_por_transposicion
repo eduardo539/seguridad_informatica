@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: rgb(187, 187, 187);
+        }
+        .container {
+            margin: 50px auto;
+            width: 400px;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            color: black;
+            font-size: 18px;
+        }
+        .btn_cifrar{
+            background-color: rgb(159, 197, 255);
+            padding: 7px;
+            margin-bottom: 5px;
+            border-radius: 10px;
+        }
+        .btn_decifrar{
+            background-color: rgb(255, 225, 141);
+            padding: 7px;
+            margin-bottom: 5px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Cifrado por Transposición</h1>
+        <textarea id="inputText" placeholder="Ingresa tu mensaje"></textarea>
+        <button class="btn_cifrar" onclick="cifrarMensaje()">Cifrar</button>
+        <button class="btn_decifrar" onclick="descifrarMensaje()">Descifrar</button>
+        <br>
+        <textarea id="outputText" readonly placeholder="Mensaje decifrado"></textarea>
+        <p>Para decifrar el mensaje, copiar el mensaje cifrado y colocarlo en el primer area de texto</p>
+    </div>
+
+    <script>
+        function cifrarMensaje() {
+            const inputText = document.getElementById("inputText").value;
+            const clave = 2; // Número de columnas para la transposición, este número puede ser otro
+            let cifrado = "";
+
+            for (let col = 0; col < clave; col++) {
+                for (let i = col; i < inputText.length; i += clave) {
+                    cifrado += inputText[i];
+                }
+            }
+
+            document.getElementById("outputText").value = cifrado;
+        }
+
+        function descifrarMensaje() {
+            const inputText = document.getElementById("inputText").value;
+            const clave = 2; // Número de columnas para la transposición, este número debe ser el mismo al del cifrado
+            const filas = Math.ceil(inputText.length / clave);
+            const descifrado = new Array(filas);
+
+            for (let i = 0; i < filas; i++) {
+                descifrado[i] = new Array(clave);
+            }
+
+            let index = 0;
+
+            for (let col = 0; col < clave; col++) {
+                for (let fila = 0; fila < filas; fila++) {
+                    if (index < inputText.length) {
+                        descifrado[fila][col] = inputText[index];
+                        index++;
+                    }
+                }
+            }
+
+            let mensajeDescifrado = "";
+
+            for (let fila = 0; fila < filas; fila++) {
+                for (let col = 0; col < clave; col++) {
+                    if (descifrado[fila][col]) {
+                        mensajeDescifrado += descifrado[fila][col];
+                    }
+                }
+            }
+
+            document.getElementById("outputText").value = mensajeDescifrado;
+        }
+    </script>
+</body>
+</html>
