@@ -1,68 +1,62 @@
-import React, { useState } from 'react';
-import CryptoJS from 'crypto-js';
+import React, { useState } from "react";
+import "./Cifrado.css";
 
-function CifradoCesar() {
-  const [texto, setTexto] = useState('');
-  const [desplazamiento, setDesplazamiento] = useState('');
-  const [resultado, setResultado] = useState('');
+const CifradoCesar = () => {
+  const [message, setMessage] = useState("");
+  const [shift, setShift] = useState(0);
+  const [encryptedMessage, setEncryptedMessage] = useState("");
 
-  const cifrar = () => {
-    const desplazamientoInt = parseInt(desplazamiento);
-
-    if (isNaN(desplazamientoInt)) {
-      alert('Por favor, ingrese un valor válido para el desplazamiento.');
-      return;
-    }
-
-    const resultado = cifrarCesar(texto, desplazamientoInt);
-    setResultado('Resultado cifrado: ' + resultado);
+  const encryptCesar = (text, shift) => {
+    return text
+      .split("")
+      .map((char) => {
+        if (char.match(/[a-z]/i)) {
+          const isUpperCase = char === char.toUpperCase();
+          const code = char.charCodeAt(0);
+          const offset = isUpperCase ? 65 : 97;
+          return String.fromCharCode(((code - offset + shift) % 26) + offset);
+        }
+        return char;
+      })
+      .join("");
   };
 
-  const descifrar = () => {
-    const desplazamientoInt = parseInt(desplazamiento);
-
-    if (isNaN(desplazamientoInt)) {
-      alert('Por favor, ingrese un valor válido para el desplazamiento.');
-      return;
-    }
-
-    const resultado = descifrarCesar(texto, desplazamientoInt);
-    setResultado('Resultado descifrado: ' + resultado);
+  const decryptCesar = (text, shift) => {
+    return encryptCesar(text, 26 - shift);
   };
 
-  const cifrarCesar = (texto, desplazamiento) => {
-    return CryptoJS.AES.encrypt(texto, desplazamiento.toString()).toString();
+  const handleEncrypt = () => {
+    const encrypted = encryptCesar(message, shift);
+    setEncryptedMessage(encrypted);
   };
 
-  const descifrarCesar = (textoCifrado, desplazamiento) => {
-    const bytes = CryptoJS.AES.decrypt(textoCifrado, desplazamiento.toString());
-    return bytes.toString(CryptoJS.enc.Utf8);
+  const handleDecrypt = () => {
+    const decrypted = decryptCesar(encryptedMessage, shift);
+    setEncryptedMessage(decrypted);
   };
 
   return (
-    <div>
-      <h1>Cifrado César</h1>
-      <label htmlFor="texto">Texto:</label>
-      <input
-        type="text"
-        id="texto"
-        placeholder="Ingrese una palabra"
-        value={texto}
-        onChange={(e) => setTexto(e.target.value)}
+    <div className="cesar-cipher">
+      <h2>Cifrado y Descifrado César</h2>
+      <textarea
+        placeholder="Mensaje"
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
       />
-      <label htmlFor="desplazamiento">Desplazamiento:</label>
       <input
         type="number"
-        id="desplazamiento"
-        placeholder="Ingrese el desplazamiento"
-        value={desplazamiento}
-        onChange={(e) => setDesplazamiento(e.target.value)}
+        placeholder="Desplazamiento"
+        value={shift}
+        onChange={(e) => setShift(parseInt(e.target.value))}
       />
-      <button onClick={cifrar}>Cifrar</button>
-      <button onClick={descifrar}>Descifrar</button>
-      <div id="resultado">{resultado}</div>
+      <button onClick={handleEncrypt}>Cifrar</button>
+      <button onClick={handleDecrypt}>Descifrar</button>
+      <div className="result">
+        <p>Resultado:</p>
+        <textarea value={encryptedMessage} readOnly />
+      </div>
     </div>
   );
-}
+};
 
 export default CifradoCesar;
